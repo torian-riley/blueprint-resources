@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDR Tech Stack — Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bp-charcoal: #3F454A;
+    --bp-blue: #3979F9;
+    --bp-periwinkle: #CEDEFD;
+    --bp-steel: #B4C4E3;
+    --bp-white: #FFFFFF;
+    --bp-light: #F5F7FF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Lato', Arial, sans-serif; color: var(--bp-charcoal); background: var(--bp-white); font-size: 15px; line-height: 1.65; }
+  header { background: var(--bp-white); border-bottom: 2px solid var(--bp-steel); padding: 1rem 2.5rem; display: flex; align-items: center; justify-content: space-between; }
+  .wordmark { font-family: 'Montserrat', Arial Black, sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--bp-charcoal); letter-spacing: -0.5px; }
+  .confidential { font-family: 'Lato', Arial, sans-serif; font-size: 0.75rem; color: var(--bp-charcoal); opacity: 0.6; letter-spacing: 0.5px; }
+  .hero { background: var(--bp-charcoal); padding: 3rem 2.5rem 2.5rem; color: var(--bp-white); }
+  .chip { display: inline-block; background: var(--bp-periwinkle); color: var(--bp-charcoal); font-family: 'Lato', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px; margin-bottom: 1rem; }
+  .hero h1 { font-family: 'Montserrat', Arial Black, sans-serif; font-weight: 700; font-size: 2.25rem; color: var(--bp-white); line-height: 1.15; margin-bottom: 0.75rem; }
+  .hero p { font-size: 1rem; color: rgba(255,255,255,0.75); max-width: 640px; }
+  main { max-width: 960px; margin: 0 auto; padding: 2.5rem 2.5rem 4rem; }
+  .section { margin-bottom: 3rem; border-bottom: 1px solid var(--bp-steel); padding-bottom: 2.5rem; }
+  .section:last-child { border-bottom: none; }
+  .section-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; }
+  .section-num { flex-shrink: 0; width: 32px; height: 32px; background: var(--bp-blue); color: var(--bp-white); font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.8rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .section-title-wrap h2 { font-family: 'Montserrat', Arial Black, sans-serif; font-weight: 700; font-size: 1.35rem; color: var(--bp-charcoal); margin-bottom: 2px; }
+  .rec-badge { display: inline-block; background: var(--bp-periwinkle); color: var(--bp-charcoal); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 10px; border-radius: 999px; }
+  .body-text { color: var(--bp-charcoal); margin-bottom: 1rem; font-size: 0.95rem; }
+  .blueprint-note { background: var(--bp-light); border-left: 3px solid var(--bp-blue); padding: 0.9rem 1.1rem; border-radius: 0 8px 8px 0; margin: 1.25rem 0; font-size: 0.9rem; color: var(--bp-charcoal); }
+  .blueprint-note strong { color: var(--bp-blue); }
+  .blueprint-note a { color: var(--bp-blue); font-weight: 700; text-decoration: none; }
+  .blueprint-note a:hover { text-decoration: underline; }
+  .hub-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--bp-charcoal); opacity: 0.5; margin: 1rem 0 0.4rem; display: block; }
+  .hub-primary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0.5rem; }
+  .hub-secondary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+  .hub-card { background: var(--bp-white); border: 1px solid var(--bp-steel); border-radius: 8px; padding: 1rem; }
+  .hub-card.primary { border-color: var(--bp-blue); border-width: 1.5px; }
+  .hub-card h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--bp-charcoal); margin-bottom: 0.4rem; }
+  .hub-card.primary h4 { color: var(--bp-blue); }
+  .hub-card p { font-size: 0.82rem; color: var(--bp-charcoal); line-height: 1.5; }
+  .tier-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.88rem; }
+  .tier-table thead tr { background: var(--bp-charcoal); color: var(--bp-white); }
+  .tier-table thead th { font-family: 'Lato', sans-serif; font-weight: 700; padding: 9px 14px; text-align: left; }
+  .tier-table tbody tr:nth-child(even) { background: var(--bp-light); }
+  .tier-table tbody td { padding: 8px 14px; border-bottom: 1px solid var(--bp-steel); vertical-align: top; line-height: 1.5; }
+  .tier-table tbody td:first-child { font-weight: 700; white-space: nowrap; }
+  .compare-table { width: 100%; border-collapse: collapse; margin: 1.25rem 0; font-size: 0.88rem; table-layout: fixed; }
+  .compare-table th { background: var(--bp-charcoal); color: var(--bp-white); padding: 9px 12px; font-family: 'Lato', sans-serif; font-weight: 700; text-align: left; }
+  .compare-table th:first-child { width: 22%; }
+  .compare-table th.rec-col { background: var(--bp-blue); }
+  .compare-table tbody tr:nth-child(even) { background: var(--bp-light); }
+  .compare-table tbody td { padding: 8px 12px; border-bottom: 1px solid var(--bp-steel); vertical-align: top; line-height: 1.5; }
+  .compare-table tbody td.rec-col { background: rgba(57,121,249,0.06); border-left: 2px solid var(--bp-blue); border-right: 2px solid var(--bp-blue); }
+  .compare-table tbody tr:last-child td.rec-col { border-bottom: 2px solid var(--bp-blue); }
+  .clay-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 1.25rem 0; }
+  .clay-card { background: var(--bp-white); border: 1px solid var(--bp-steel); border-radius: 8px; padding: 1rem; }
+  .clay-card h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.82rem; color: var(--bp-charcoal); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem; }
+  .clay-credit-range { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.3rem; color: var(--bp-blue); margin-bottom: 0.25rem; }
+  .clay-card p { font-size: 0.8rem; color: var(--bp-charcoal); opacity: 0.8; }
+  .clay-plan-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0; table-layout: fixed; }
+  .clay-plan-table th { background: var(--bp-charcoal); color: var(--bp-white); padding: 7px 12px; font-weight: 700; text-align: left; }
+  .clay-plan-table td { padding: 7px 12px; border-bottom: 1px solid var(--bp-steel); }
+  .clay-plan-table tbody tr:nth-child(even) { background: var(--bp-light); }
+  .tool-card { display: flex; gap: 1.25rem; background: var(--bp-white); border: 1px solid var(--bp-steel); border-radius: 8px; padding: 1.25rem; margin: 1.25rem 0; align-items: flex-start; }
+  .tool-icon { flex-shrink: 0; width: 44px; height: 44px; background: var(--bp-periwinkle); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--bp-charcoal); }
+  .tool-card h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1rem; color: var(--bp-charcoal); margin-bottom: 0.3rem; }
+  .tool-card p { font-size: 0.88rem; color: var(--bp-charcoal); line-height: 1.6; }
+  .tool-link { display: inline-block; margin-top: 0.5rem; font-size: 0.82rem; color: var(--bp-blue); font-weight: 700; text-decoration: none; }
+  .tool-link:hover { text-decoration: underline; }
+  .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 1.25rem 0; }
+  .resource-card { background: var(--bp-light); border: 1px solid var(--bp-steel); border-radius: 8px; padding: 1rem; }
+  .resource-card .tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--bp-blue); margin-bottom: 0.35rem; }
+  .resource-card h4 { font-family: 'Lato', sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--bp-charcoal); margin-bottom: 0.4rem; }
+  .resource-card p { font-size: 0.82rem; color: var(--bp-charcoal); margin-bottom: 0.5rem; }
+  .resource-card a { font-size: 0.82rem; color: var(--bp-blue); text-decoration: none; font-weight: 700; }
+  .resource-card a:hover { text-decoration: underline; }
+  footer { background: var(--bp-charcoal); padding: 1.5rem 2.5rem; display: flex; align-items: center; justify-content: space-between; }
+  footer .wordmark { color: var(--bp-white); font-size: 1rem; }
+  footer p { font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+  @media (max-width: 700px) {
+    header, main, footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .hero { padding: 2rem 1.25rem; }
+    .hero h1 { font-size: 1.6rem; }
+    .hub-primary, .hub-secondary { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="wordmark">blueprint</span>
+  <span class="confidential">CONFIDENTIAL</span>
+</header>
+
+<div class="hero">
+  <div class="chip">GTM RESOURCES</div>
+  <h1>SDR Tech Stack Recommendations</h1>
+  <p>A Blueprint-curated toolkit for early-stage SaaS companies building an outbound sales development program from the ground up.</p>
+</div>
+
+<main>
+
+  <!-- 1. CRM -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title-wrap">
+        <h2>CRM &nbsp;<span class="rec-badge">Recommended: HubSpot</span></h2>
+      </div>
+    </div>
+
+    <p class="body-text">HubSpot is the CRM of choice across the Blueprint portfolio. Relative to alternatives, it stands out on price, customer support quality, and an interface that sales teams actually adopt without much hand-holding. The Smart CRM is free and works fine for basic contact and deal tracking, but most teams will want to layer in one or more Hubs as they build out their GTM motion.</p>
+
+    <span class="hub-label">Core hubs we recommend</span>
+    <div class="hub-primary">
+      <div class="hub-card primary">
+        <h4>Sales Hub</h4>
+        <p>Pipeline management, deal tracking, sequences, meeting scheduling, and rep activity reporting. The primary tool for your SDRs and AEs to manage outbound and close deals.</p>
+      </div>
+      <div class="hub-card primary">
+        <h4>Marketing Hub</h4>
+        <p>Email marketing, landing pages, ad tracking, lead nurturing workflows, and marketing attribution. Powers your demand-gen and inbound motion alongside outbound.</p>
+      </div>
+      <div class="hub-card primary">
+        <h4>Content Hub</h4>
+        <p>CMS, blog, SEO tools, and AI content generation. Relevant once your team is building a content engine to support inbound pipeline.</p>
+      </div>
+    </div>
+
+    <span class="hub-label">Also available</span>
+    <div class="hub-secondary">
+      <div class="hub-card">
+        <h4>Service Hub</h4>
+        <p>Ticketing, knowledge base, and CS workflows. Typically added once the core sales and marketing motion is running.</p>
+      </div>
+      <div class="hub-card">
+        <h4>Commerce Hub</h4>
+        <p>CPQ, billing, and payments. Useful if you want to manage quotes and collect payment directly within HubSpot.</p>
+      </div>
+      <div class="hub-card">
+        <h4>Data Hub</h4>
+        <p>Data sync, programmable automation, and data quality tooling. Most relevant once HubSpot is your system of record and you need cross-platform data integrity.</p>
+      </div>
+    </div>
+
+    <table class="tier-table">
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Best for</th>
+          <th>Key capabilities</th>
+          <th>Heads up</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Starter</td>
+          <td>Very early stage; just needs a CRM to get started</td>
+          <td>Basic pipeline, email tracking, forms, limited sequences (5-step), simple reporting</td>
+          <td>Reporting and automation are significantly limited; most teams outgrow this quickly</td>
+        </tr>
+        <tr>
+          <td>Professional</td>
+          <td>Series A–B companies building a real SDR/AE motion</td>
+          <td>Full sequences, custom reports and dashboards, workflow automation, predictive lead scoring, A/B testing</td>
+          <td>The right tier for most portcos. Hits the sweet spot of capability vs. cost</td>
+        </tr>
+        <tr>
+          <td>Enterprise</td>
+          <td>Scaling companies with complex rev ops needs</td>
+          <td>Custom objects, advanced permissions, sandboxes, multi-touch attribution, SSO</td>
+          <td>Good fit when you need custom objects for non-standard data models, granular permissions across multiple sales teams, or a sandbox environment for testing workflow changes before pushing to production</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="blueprint-note">
+      <strong>Blueprint can help.</strong> Setting up HubSpot through us gets your team meaningful discounts on licensing. Our build team is also available to assist with initial onboarding, foundational dashboards and reports, and core workflow setup so you are not starting from a blank slate. Reach out to get started: <a href="mailto:hubspot@onblueprint.com">hubspot@onblueprint.com</a>
+    </div>
+  </section>
+
+  <!-- 2. DIALER -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title-wrap">
+        <h2>Dialer &nbsp;<span class="rec-badge">Recommended: Nooks</span></h2>
+      </div>
+    </div>
+
+    <p class="body-text">For most portcos building an outbound motion from scratch, we recommend Nooks. It bundles a parallel dialer, real-time AI call coaching, post-call analytics, and signal-based prospect prioritization into a single workspace, which means your SDRs are not context-switching between tools to research, dial, and log calls.</p>
+
+    <p class="body-text">That said, Nooks and Orum are genuinely close in core functionality. Our recommendation is based on the overall workflow experience and breadth of features rather than a meaningful gap between the two. If your team is already on Orum or has a strong preference for it, that is a reasonable choice.</p>
+
+    <p class="body-text" style="font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.35rem;">Nooks vs. Orum vs. Gong</p>
+    <p class="body-text" style="font-size:0.85rem; opacity:0.75; margin-bottom:0.75rem;">Note: Gong is a conversation intelligence and revenue platform, not a parallel dialer. It is included here because teams often evaluate it alongside dialers when thinking about call coaching and pipeline analytics. Dialers are pre-pipeline tools (more conversations booked), while Gong operates mid-to-post pipeline (better conversations closed). Gong starts making sense once your team is running enough sales calls that coaching at scale becomes a bottleneck, typically 3+ quota-carrying reps with meaningful call volume.</p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th class="rec-col">Nooks (recommended)</th>
+          <th>Orum</th>
+          <th>Gong</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Primary use</td>
+          <td class="rec-col">AI dialer + outbound workspace</td>
+          <td>AI parallel dialer</td>
+          <td>Conversation intelligence and revenue analytics</td>
+        </tr>
+        <tr>
+          <td>Parallel dialing</td>
+          <td class="rec-col">Yes (up to 5 lines)</td>
+          <td>Yes (up to 7 lines)</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>Virtual salesfloor</td>
+          <td class="rec-col">Yes — pioneered the concept</td>
+          <td>Limited</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>AI call coaching</td>
+          <td class="rec-col">Real-time AI coach, call scoring, objection analysis</td>
+          <td>AI coaching suite with call scoring and role-play scenarios</td>
+          <td>Best-in-class post-call analysis and deal intelligence</td>
+        </tr>
+        <tr>
+          <td>Prospect prioritization</td>
+          <td class="rec-col">Signal-based (intent, website visits, LinkedIn)</td>
+          <td>Limited</td>
+          <td>Intent signals via Gong Engage add-on</td>
+        </tr>
+        <tr>
+          <td>CRM integrations</td>
+          <td class="rec-col">HubSpot, Salesforce, Pipedrive, Outreach, Salesloft, Apollo, Gong</td>
+          <td>HubSpot, Salesforce, Outreach, Salesloft, Apollo (direct engineering integration)</td>
+          <td>HubSpot, Salesforce, and 100+ tools natively</td>
+        </tr>
+        <tr>
+          <td>Number spam protection</td>
+          <td class="rec-col">Automated caller ID health monitoring and rotation</td>
+          <td>NoMoRobo-based monitoring</td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>Pricing (approx.)</td>
+          <td class="rec-col">~$5,000/user/year</td>
+          <td>~$5,000/user/year</td>
+          <td>Custom; typically $1,200–$1,600+/user/year</td>
+        </tr>
+        <tr>
+          <td>Best for</td>
+          <td class="rec-col">SDR teams wanting dialing and coaching in one place</td>
+          <td>High-volume teams prioritizing connect rate speed</td>
+          <td>AE teams and managers who need deal and pipeline intelligence</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 3. ENRICHMENT -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title-wrap">
+        <h2>Data Enrichment &nbsp;<span class="rec-badge">Recommended: Clay</span></h2>
+      </div>
+    </div>
+
+    <p class="body-text">Clay is a no-code enrichment platform that aggregates 150+ data providers into a single waterfall workflow. Instead of subscribing to Apollo, ZoomInfo, and Clearbit separately, you build one Clay table that queries all of them in sequence, only paying for what returns a result. For building SDR lists and enriching contacts at scale, it is the most efficient tool on the market.</p>
+
+    <p class="body-text"><strong>Example workflow:</strong> Pull a list of 500 companies matching your ICP, find the VP of Sales at each, enrich with verified email, direct dial, and LinkedIn URL, then push directly into HubSpot and your sequencing tool, fully automated with no manual research.</p>
+
+    <p class="body-text" style="font-weight:700; margin-bottom:0.5rem;">Understanding Clay credits</p>
+    <p class="body-text">Clay uses a credit-based system. Each data action (a lookup, enrichment, or AI step) consumes credits. Credits are not charged on failed lookups. Here is a rough guide to what common SDR workflows cost:</p>
+
+    <div class="clay-grid">
+      <div class="clay-card">
+        <h4>Company enrichment</h4>
+        <div class="clay-credit-range">~6–10 credits</div>
+        <p>Per company. Covers firmographics, technographics, headcount, funding stage, and industry. Good starting point before identifying contacts.</p>
+      </div>
+      <div class="clay-card">
+        <h4>Contact identification</h4>
+        <div class="clay-credit-range">~2–5 credits</div>
+        <p>Per contact. Finding a decision-maker by title (e.g., "VP of Sales") from Clay's database of people records.</p>
+      </div>
+      <div class="clay-card">
+        <h4>Email enrichment</h4>
+        <div class="clay-credit-range">~3–6 credits</div>
+        <p>Per contact. Waterfall across multiple providers to find and verify a professional email address.</p>
+      </div>
+      <div class="clay-card">
+        <h4>Phone enrichment</h4>
+        <div class="clay-credit-range">~5–13 credits</div>
+        <p>Per contact. Direct dials are harder to source and cost more. Budget on the higher end for mobile numbers.</p>
+      </div>
+      <div class="clay-card">
+        <h4>Full contact build</h4>
+        <div class="clay-credit-range">~15–35 credits</div>
+        <p>Per contact end-to-end. Includes company enrichment, contact ID, email, phone, and LinkedIn. Budget roughly 25 credits/contact for planning.</p>
+      </div>
+      <div class="clay-card">
+        <h4>AI personalization</h4>
+        <div class="clay-credit-range">~5–25 credits</div>
+        <p>Per action. Claygent research tasks like writing a custom first line or summarizing a prospect's LinkedIn vary by model and complexity.</p>
+      </div>
+    </div>
+
+    <p class="body-text" style="font-weight:700; margin-bottom:0.5rem; margin-top:1rem;">Choosing a plan</p>
+
+    <table class="clay-plan-table">
+      <thead>
+        <tr>
+          <th>Plan</th>
+          <th>Price (annual)</th>
+          <th>Data credits/mo</th>
+          <th>Best for</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Launch</td>
+          <td>~$185/mo</td>
+          <td>2,500</td>
+          <td>First SDR hire testing Clay; roughly 75–100 fully enriched contacts/mo</td>
+        </tr>
+        <tr>
+          <td>Growth</td>
+          <td>~$495/mo</td>
+          <td>6,000</td>
+          <td>1–2 SDRs doing active outbound; roughly 200–400 enriched contacts/mo. Includes HubSpot auto-sync.</td>
+        </tr>
+        <tr>
+          <td>Pro</td>
+          <td>~$800/mo</td>
+          <td>50,000</td>
+          <td>SDR team at scale; 1,500–3,000+ enriched contacts/mo. Full CRM integration included.</td>
+        </tr>
+        <tr>
+          <td>Enterprise</td>
+          <td>Custom</td>
+          <td>Custom</td>
+          <td>10,000+ records/mo. Custom onboarding and a dedicated Growth Strategist.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="body-text" style="font-size:0.82rem; opacity:0.7;">Note: CRM auto-sync (HubSpot) requires the Growth plan or above. Budget roughly 20–30% overhead for failed lookup attempts on lower-quality lists. Top-up credits cost about 50% more than your plan's base rate, so it is worth right-sizing your plan upfront rather than relying on overages.</p>
+  </section>
+
+  <!-- 4. SEQUENCING -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title-wrap">
+        <h2>Sequencing &nbsp;<span class="rec-badge">Recommended: Outreach</span></h2>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-icon">OTR</div>
+      <div>
+        <h4>Outreach</h4>
+        <p>The industry-standard sales engagement platform for running multi-channel outbound sequences (email, phone, LinkedIn, SMS). Outreach sits on top of your CRM and gives SDRs a structured daily task queue, pulling in contacts, automating follow-ups, and logging all activity back to HubSpot. Purpose-built for high-velocity outbound, with strong A/B testing, reply detection, and sequence analytics. Integrates natively with HubSpot, Nooks, Clay, and Gong.</p>
+        <a href="https://www.outreach.io" class="tool-link" target="_blank">outreach.io ↗</a>
+      </div>
+    </div>
+
+    <div class="blueprint-note">
+      <strong>Note on minimum spend.</strong> Outreach requires a minimum annual commitment (typically $10,000+ before per-seat costs) that can be prohibitive for very early-stage teams. If your team has fewer than 2–3 SDRs or is not ready for that level of investment, HubSpot's native sequences are a viable starting point and can handle the basics until you scale. Apollo is another option worth evaluating for teams that want prospecting and sequencing in one tool at a lower entry price point.
+    </div>
+  </section>
+
+  <!-- 5. TRAINING -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div class="section-title-wrap">
+        <h2>SDR / AE Training and Coaching &nbsp;<span class="rec-badge">Recommended: Second Nature</span></h2>
+      </div>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-icon">SN</div>
+      <div>
+        <h4>Second Nature</h4>
+        <p>Second Nature is an AI-powered sales coaching platform built for rep onboarding and ongoing skills development. Reps practice real-world sales conversations with an AI persona covering cold call openers, discovery calls, objection handling, and demo pitches, then get scored on talk tracks, filler words, pacing, and playbook adherence. Managers see rep-by-rep readiness scores without having to shadow every call. Cuts ramp time for new SDRs and AEs by replacing passive training with active repetition at scale. It also holds up well beyond onboarding: when you launch a new product, pick up new competitive intelligence, or start hearing a new objection in the field, you can build a targeted scenario and get the whole team repped up quickly without waiting for the next QBR or all-hands.</p>
+        <a href="https://www.secondnature.ai" class="tool-link" target="_blank">secondnature.ai ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. RESOURCES -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div class="section-title-wrap">
+        <h2>Related Blueprint Resources</h2>
+      </div>
+    </div>
+
+    <p class="body-text">Additional tools, frameworks, and reading to support your SDR build-out.</p>
+
+    <div class="resources-grid">
+      <div class="resource-card">
+        <div class="tag">SDR Onboarding</div>
+        <h4>SDR Onboarding Guide</h4>
+        <p>A structured Blueprint resource for ramping new SDRs, covering process, tooling, and expectations.</p>
+        <a href="https://tcavanahbp.github.io/sdr-onboarding/" target="_blank">View SDR Onboarding ↗</a>
+      </div>
+      <div class="resource-card">
+        <div class="tag">GTM Audit</div>
+        <h4>GTM Health Snapshot</h4>
+        <p>Blueprint's structured GTM audit framework for early-stage SaaS portcos, covering sales health, pipeline quality, and go-to-market fundamentals.</p>
+        <a href="mailto:triley@onblueprint.com">Ask us ↗</a>
+      </div>
+      <div class="resource-card">
+        <div class="tag">External Reading</div>
+        <h4>Guide to Building an SDR Program</h4>
+        <p>A practical guide from demandDrive covering how to stand up a sales development function and choose the right tools to run it.</p>
+        <a href="https://torian-riley.github.io/blueprint-resources/dD_Guide_to_Building_an_SDR_Program.pdf" target="_blank">Download PDF ↗</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="wordmark">blueprint</span>
+  <p>Blueprint Equity Management, LLC &nbsp;·&nbsp; Confidential</p>
+</footer>
+
+</body>
+</html>
